@@ -2,14 +2,26 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.delr3ves.dotto">
 
+    <!-- Allows access to the flashlight -->
+    <uses-feature android:name="com.android.hardware.camera2.full"/>
+    <uses-feature android:name="android.hardware.camera2.full" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".DottoApplication">
         <activity
-            android:name="io.github.delr3ves.dotto.MorseGeneratorActivity"
+            android:name=".MorseGeneratorActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".TorchActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

@@ -5,8 +5,8 @@ android {
     compileSdkVersion 24
     buildToolsVersion "25.0.0"
     defaultConfig {
-        applicationId "io.github.delr3ves.dottoandroid"
-        minSdkVersion 16
+        applicationId "io.github.delr3ves.dotto"
+        minSdkVersion 21
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -34,6 +34,8 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     testCompile 'junit:junit:4.12'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    compile 'com.karumi:dexter:2.3.1'
 }
 repositories {
     mavenCentral()
