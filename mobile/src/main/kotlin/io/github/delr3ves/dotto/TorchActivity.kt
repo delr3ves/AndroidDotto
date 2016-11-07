@@ -11,7 +11,7 @@ import android.view.Surface
 import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
-import io.github.delr3ves.dotto.core.model.ToggleStatus
+import io.github.delr3ves.dotto.core.model.IndicatorStatus
 import io.github.delr3ves.dotto.flash.FlashManager
 
 class TorchActivity : Activity() {
@@ -127,11 +127,11 @@ class TorchActivity : Activity() {
                 val button = view as ImageButton
                 val newStatus = flashManager!!.toggle()
                 when (newStatus) {
-                    is ToggleStatus.On -> {
+                    is IndicatorStatus.On -> {
                         Handler().postDelayed({ onClick(view) }, 2000)
                         button.setImageResource(R.drawable.flashlight_on)
                     }
-                    is ToggleStatus.Off -> {
+                    is IndicatorStatus.Off -> {
                         button.setImageResource(R.drawable.flashlight_off)
                     }
                 }
