@@ -2,7 +2,7 @@ package io.github.delr3ves.Dot
 
 import io.github.delr3ves.dotto.core.model.MorseSymbol
 import io.github.delr3ves.dotto.core.model.MorseSymbol.*
-import org.apache.commons.lang3.StringUtils
+import io.github.delr3ves.dotto.core.extensions.CharExtensions.normalize
 
 class MorseTranslator {
 
@@ -47,7 +47,7 @@ class MorseTranslator {
 
     fun toMorse(text: String): List<MorseSymbol> {
         val morse = text.trim().flatMap { letter ->
-            val morseSequence = charToMorseSymbol.get(normalizeChar(letter))
+            val morseSequence = charToMorseSymbol.get(letter.normalize())
             (morseSequence.orEmpty() + ShortSpace).asIterable()
         }
         return morse.orEmpty().dropLastWhile { it.equals(ShortSpace) }
@@ -84,10 +84,6 @@ class MorseTranslator {
             chunks.add(currentChunk)
         }
         return chunks
-    }
-
-    private fun normalizeChar(char: Char): Char {
-        return StringUtils.stripAccents(char.toString()).toCharArray().first().toLowerCase()
     }
 
 }
