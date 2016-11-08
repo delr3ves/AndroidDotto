@@ -1,43 +1,77 @@
 package io.github.delr3ves.dotto
 
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.View
-import android.view.Menu
-import android.view.MenuItem
+import android.widget.EditText
+import android.widget.TextView
+import butterknife.BindView
+import butterknife.ButterKnife
+import butterknife.Unbinder
+import io.github.delr3ves.Dot.MorseTranslator
+import io.github.delr3ves.dotto.core.model.MorseSymbol
+import io.github.delr3ves.dotto.flash.CameraManager
 
 class MorseGeneratorActivity : AppCompatActivity() {
+    lateinit var cameraManager: CameraManager
+    private val translator = MorseTranslator()
+    lateinit var unbinder: Unbinder
+
+    @BindView(R.id.morse_input)
+    lateinit var input: EditText
+
+    @BindView(R.id.morse_translation)
+    lateinit var translation: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_morse_generator)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
+        ButterKnife.setDebug(true)
+        unbinder = ButterKnife.bind(this)
+
+        cameraManager = CameraManager(this)
+        cameraManager.initializeFlashIfNeeded()
 
         val fab = findViewById(R.id.fab) as FloatingActionButton
-        fab.setOnClickListener { view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show() }
+        fab.setOnClickListener(onMorseGenerate())
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_morse_generator, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true
+    private fun onMorseGenerate(): (View) -> Unit {
+        return { view ->
+            translation.setText("")
+            val morse = translator.toMorse(input.text.toString())
+            morse.forEach {
+                lightSymbol(it)
+                appendSymbol(it)
+            }
         }
-
-        return super.onOptionsItemSelected(item)
     }
+
+    private fun appendSymbol(symbol: MorseSymbol) {
+        val newText = translation.text.toString() + symbol.representation
+        translation.setText(newText)
+    }
+
+    private fun lightSymbol(symbol: MorseSymbol): Boolean {
+        val baseDuration = 100L
+        val relativeDuration = when (symbol) {
+            is MorseSymbol.Dot -> 1L
+            is MorseSymbol.Dash -> 3L
+            is MorseSymbol.ShortSpace -> 2L
+            is MorseSymbol.LongSpace -> 3L
+        }
+        cameraManager.getFlashManager()?.turnOn()
+        return Handler().postDelayed({
+            cameraManager.getFlashManager()?.turnOff()
+        }, baseDuration * relativeDuration)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraManager.closeCamera()
+        unbinder.unbind()
+    }
+
 }

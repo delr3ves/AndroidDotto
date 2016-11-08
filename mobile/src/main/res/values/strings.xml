@@ -2,4 +2,5 @@
     <string name="app_name">Dotto</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_torch">Torch</string>
+    <string name="hint_write_your_message">Write your message</string>
 </resources>
