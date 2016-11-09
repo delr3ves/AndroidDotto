@@ -7,15 +7,20 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder
 import io.github.delr3ves.Dot.MorseTranslator
 import io.github.delr3ves.dotto.core.model.MorseSymbol
 import io.github.delr3ves.dotto.flash.CameraManager
+import io.github.delr3ves.dotto.flash.exceptions.FlashNotAvailableException
+import javax.inject.Inject
 
 class MorseGeneratorActivity : AppCompatActivity() {
+    @Inject
     lateinit var cameraManager: CameraManager
+
     private val translator = MorseTranslator()
     lateinit var unbinder: Unbinder
 
@@ -31,11 +36,16 @@ class MorseGeneratorActivity : AppCompatActivity() {
         ButterKnife.setDebug(true)
         unbinder = ButterKnife.bind(this)
 
-        cameraManager = CameraManager(this)
-        cameraManager.initializeFlashIfNeeded()
+        (application as (DottoApplication)).component.inject(this)
 
+        try {
+            cameraManager.initializeFlashIfNeeded()
+        } catch (e: FlashNotAvailableException) {
+            Toast.makeText(this, R.string.error_flash_not_available, Toast.LENGTH_LONG)
+        }
         val fab = findViewById(R.id.fab) as FloatingActionButton
         fab.setOnClickListener(onMorseGenerate())
+
     }
 
     private fun onMorseGenerate(): (View) -> Unit {

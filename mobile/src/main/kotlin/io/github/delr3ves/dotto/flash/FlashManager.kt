@@ -13,30 +13,30 @@ class FlashManager(builder: CaptureRequest.Builder, session: CameraCaptureSessio
     private val session = session
 
     fun toggle(): IndicatorStatus {
-        when (getStatus()) {
+        return when (getStatus()) {
             is Off -> {
                 turnOn()
-                return On()
             }
             is On -> {
                 turnOff()
-                return Off()
             }
         }
     }
 
-    fun turnOn() {
-        builder!!.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH)
-        session!!.setRepeatingRequest(builder!!.build(), null, null)
+    fun turnOn(): IndicatorStatus {
+        builder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH)
+        session.setRepeatingRequest(builder!!.build(), null, null)
+        return On()
     }
 
-    fun turnOff() {
-        builder!!.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF)
-        session!!.setRepeatingRequest(builder!!.build(), null, null)
+    fun turnOff(): IndicatorStatus {
+        builder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF)
+        session.setRepeatingRequest(builder!!.build(), null, null)
+        return Off()
     }
 
     fun getStatus(): IndicatorStatus {
-        if (builder!!.get(CaptureRequest.FLASH_MODE).equals(CameraMetadata.FLASH_MODE_OFF)) {
+        if (builder.get(CaptureRequest.FLASH_MODE).equals(CameraMetadata.FLASH_MODE_OFF)) {
             return Off()
         } else {
             return On()

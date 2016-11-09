@@ -3,4 +3,5 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_torch">Torch</string>
     <string name="hint_write_your_message">Write your message</string>
+    <string name="error_flash_not_available">Ooops seems like your flash is not available so we can\'t generate light code</string>
 </resources>

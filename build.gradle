@@ -4,6 +4,7 @@ buildscript {
     ext {
         kotlin_version = '1.0.4'
         butterknife_version = '8.4.0'
+        dagger_version = '2.7'
     }
     repositories {
         jcenter()

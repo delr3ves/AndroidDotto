@@ -1,19 +1,19 @@
 package io.github.delr3ves.dotto.flash
 
-import android.content.Context
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.*
 import android.hardware.camera2.CameraManager
 import android.util.Size
 import android.view.Surface
-import android.widget.Toast
+import io.github.delr3ves.dotto.flash.exceptions.FlashNotAvailableException
+import javax.inject.Inject
 
-class CameraManager(context: Context) {
+class CameraManager @Inject constructor(cameraManager: CameraManager) {
 
-    private val context = context
-    private var session: CameraCaptureSession? = null
+    private val cameraManager = cameraManager
+
     private var cameraDevice: CameraDevice? = null
-    private var cameraManager: CameraManager? = null
+    private var session: CameraCaptureSession? = null
     private var flashManager: FlashManager? = null
     private var surfaceTexture: SurfaceTexture? = null
     private var surface: Surface? = null
@@ -23,15 +23,14 @@ class CameraManager(context: Context) {
     @Throws(CameraAccessException::class)
     fun initializeFlashIfNeeded() {
         if (flashManager == null) {
-            cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-            val cameraCharacteristics = cameraManager!!.getCameraCharacteristics("0")
+            val cameraCharacteristics = cameraManager.getCameraCharacteristics("0")
             val flashAvailable = cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE)
             if (flashAvailable) {
-                cameraManager!!.openCamera("0", FlashCameraDeviceStateCallback(), null)
+                cameraManager.openCamera("0", FlashCameraDeviceStateCallback(), null)
             } else {
-                Toast.makeText(context, "Flash not available", Toast.LENGTH_SHORT).show()
+                throw FlashNotAvailableException()
             }
-            cameraManager!!.openCamera("0", FlashCameraDeviceStateCallback(), null)
+            cameraManager.openCamera("0", FlashCameraDeviceStateCallback(), null)
         }
     }
 
@@ -44,8 +43,8 @@ class CameraManager(context: Context) {
         if (cameraDevice == null || session == null) {
             return
         }
-        session!!.close()
-        cameraDevice!!.close()
+        session?.close()
+        cameraDevice?.close()
         cameraDevice = null
         session = null
     }
