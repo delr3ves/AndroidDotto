@@ -23,23 +23,29 @@ class FlashManager(builder: CaptureRequest.Builder, session: CameraCaptureSessio
         }
     }
 
+    fun setStatus(status: IndicatorStatus) = when (status) {
+        is On -> turnOn()
+        is Off -> turnOff()
+    }
+
+
     fun turnOn(): IndicatorStatus {
         builder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH)
         session.setRepeatingRequest(builder!!.build(), null, null)
-        return On()
+        return On
     }
 
     fun turnOff(): IndicatorStatus {
         builder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_OFF)
         session.setRepeatingRequest(builder!!.build(), null, null)
-        return Off()
+        return Off
     }
 
     fun getStatus(): IndicatorStatus {
         if (builder.get(CaptureRequest.FLASH_MODE).equals(CameraMetadata.FLASH_MODE_OFF)) {
-            return Off()
+            return Off
         } else {
-            return On()
+            return On
         }
     }
 }
